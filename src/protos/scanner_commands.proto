@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+package scannercommand;
+
+service ScannerCommand {
+	// Command to connect to scanner
+	rpc ScanConnect(IpAddress) returns (ScannerResponse) {}
+
+	// Start the scan with the scan parameters
+	rpc StartScan(ScanParam) returns (ScannerResponse) {}
+
+	// Request to stop the scan
+	rpc StopScan(ScannerRequest) returns (ScannerResponse) {}
+
+	// Request to shutdown scanner
+	rpc ScanShutDown(ScannerRequest) returns (ScannerResponse) {}
+
+	// Request to check scan progress
+	rpc ScanProgress(ScannerRequest) returns (ScannerProgress) {}
+}
+
+message IpAddress {
+	// A message containing IP address of scanner
+	string ScannerIP = 1;
+}
+
+message ScanParam {
+	// List of possible (useful) paramters that can be set before starting scan
+	// If parameter is not specified, defaults will be chosen
+
+	// Scanner IP Address
+	string ScannerIP = 1;
+
+	// StationaryGrey | StationaryColor | HelicalGrey | HelicalCANGrey
+	string ScanMode = 2;
+
+	// Vertical start angle for the scan area in degrees
+	double VerticalAngleMin = 3;
+
+	// Vertical end angle for the scan area in degrees
+	double VerticalAngleMax = 4;
+
+	// Horizontal start angle for the scan area in degrees
+	double HorizontalAngleMin = 5;
+
+	// Horizontal end angle for the scan area in degrees
+	double HorizontalAngleMax = 6;
+
+	// Scan resolution
+	//Possible values: 1, 2, 4, 5, 8, 10, 16, 20, 32
+	// Final resolution depends on MeasurementRate, and NoiseCompression
+	int32 Resolution = 7;
+
+	// Measurement rate or speed used to record the scans
+	//Possible values: 1, 2, 4, 8.
+	// 1 = 122.000 points per second; 2 = 244.000 points per second; 4 = 488.000 points per second; 8 = 976.000 points per second
+	int32 MeasurementRate = 8;
+
+	// Apply noise compression to the recorded scans
+	//Possible values: 1, 2, 4
+	// 1 = no noise compression; 2 = reduces number of points by 4; 4 = reduces number of points by 16.
+	int32 NoiseCompression = 9;
+
+	// Scan file number of the last scan. It will automatically be increased before every new scan.
+	int32 ScanFileNumber = 10;
+
+	// The full scan file name will be “ScanBaseName” + ScanFileNumber + “.fls”.
+	string ScanBaseName = 11;
+
+	// Defines where to save the recorded scans
+	// Possible Values: SMLocal | SMRemote | SMAuto | SMUndefined
+	string StorageMode = 12;
+
+	// Defines the folder on the remote computer to save the scans to (relevant if Stor-ageMode is set to SMRemote)
+	string RemoteScanStoragePath = 13;
+}
+
+message ScannerRequest {
+	// A simple request without parameter
+	int32 request = 1;
+}
+
+message ScannerResponse {
+
+	enum ErrorResponse {
+		// List of possible return values on function call to laser scanner
+		ERRORRESPONSE_OK = 0;
+
+		ERRORRESPONSE_BUSY = 1;
+
+		ERRORRESPONSE_TIME_OUT = 2;
+
+		ERRORRESPONSE_NOT_CONNECTED = 3;
+
+		ERRORRESPONSE_FAILED = 4;
+
+		ERRORRESPONSE_NO_WORKSPACE = 11;
+
+		ERRORRESPONSE_NO_SCAN = 13;
+
+		ERRORRESPONSE_CANNOT_OPEN_FOR_READING = 14;
+
+		ERRORRESPONSE_CANNOT_OPEN_FOR_WRITING = 15;
+
+		ERRORRESPONSE_CANNOT_FIND_SCAN_FILE = 16;
+
+		ERRORRESPONSE_CANNOT_FIND_SCAN_DATA = 17;
+
+		ERRORRESPONSE_UNKNOWN_SCAN_VERSION = 21;
+
+		ERRORRESPONSE_UNKNOWN_KEY = 22;
+
+		ERRORRESPONSE_OUT_OF_MEMORY = 26;
+
+		ERRORRESPONSE_DATA_MISSING = 27;
+
+		ERRORRESPONSE_SCAN_STILL_ACTIVE = 81;
+
+		ERRORRESPONSE_SCANNER_OPERATION_FAILURE = 83;
+
+		ERRORRESPONSE_OUT_OF_BOUNDARY = 94;
+
+		ERRORRESPONSE_SCANNER_BUSY = 116;
+
+		ERRORRESPONSE_NOT_FOUND = 169;
+	}
+
+	ErrorResponse error_response = 1;
+}
+
+message ScannerProgress {
+	// Returns the current scan progress in percent
+	int32 ScanProgress = 1;
+
+	bool ScanCompleted = 2;
+}

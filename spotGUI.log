@@ -1,0 +1,3 @@
+2019-12-12 17:48:08,578 - DEBUG - Using selector: SelectSelector
+2019-12-12 17:49:19,547 - INFO - 101 GET / (127.0.0.1) 2.00ms
+2019-12-12 17:49:24,808 - DEBUG - Using selector: SelectSelector
